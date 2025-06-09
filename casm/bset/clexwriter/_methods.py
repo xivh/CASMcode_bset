@@ -341,7 +341,7 @@ def make_orbit_bfuncs(
         - ``"cpp"``: str, C++ expression for evaluating the global correlation
           contribution
         - ``"latex_prototype"``: str, Latex formula for the prototype
-        - ``""latex_prototype_with_neighbor_indices": str, Latex formula for the
+        - ``"latex_prototype_with_neighbor_indices"``: str, Latex formula for the
           prototype using neighbor site indices instead of cluster site indices
         - ``latex_orbit"``: str, Latex formula for the orbit contribution
 
