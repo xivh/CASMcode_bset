@@ -5,6 +5,17 @@ All notable changes to `casm-bset` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-08-09
+
+### Added
+
+- Added `--test` option to `__main__` script to test specific configuration flags for clexulator compilation
+
+### Changed
+
+- Make `--autoconfigure` call `--test` as subprocesses and prefer no `-D_GLIBCXX_USE_CXX11_ABI=0`
+
+
 ## [2.0.0] - 2025-05-04
 
 ### Changed

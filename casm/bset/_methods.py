@@ -618,51 +618,59 @@ def autoconfigure(
     if not apply_results:
         orig_environ = dict(os.environ)
 
-    # try to check for clang
-    using_clang = False
-    cxx = "g++"
-    if "CASM_CXX" in os.environ:
-        cxx = os.environ["CASM_CXX"]
-    elif "CXX" in os.environ:
-        cxx = os.environ["CXX"]
-    out = subprocess.run(
-        [cxx, "--version"], stdout=subprocess.PIPE, encoding="utf-8"
-    ).stdout
-    if "clang" in out:
-        using_clang = True
-
     # known configuration sets
     set1 = dict(
         CASM_CXXFLAGS=None,
         CASM_SOFLAGS=None,
     )
     set2 = dict(
-        CASM_CXXFLAGS="-O3 -Wall -fPIC --std=c++17 -D_GLIBCXX_USE_CXX11_ABI=0 ",
-        CASM_SOFLAGS="-shared -Wl,--no-as-needed",
-    )
-    set3 = dict(
         CASM_CXXFLAGS=None,
         CASM_SOFLAGS="-shared -Wl,--no-as-needed",
     )
+    set3 = dict(
+        CASM_CXXFLAGS="-O3 -Wall -fPIC --std=c++17 -D_GLIBCXX_USE_CXX11_ABI=0 ",
+        CASM_SOFLAGS=None,
+    )
+    set4 = dict(
+        CASM_CXXFLAGS="-O3 -Wall -fPIC --std=c++17 -D_GLIBCXX_USE_CXX11_ABI=0 ",
+        CASM_SOFLAGS="-shared -Wl,--no-as-needed",
+    )
 
-    if using_clang:
-        all_vars += [set1, set2, set3]
-    else:
-        all_vars += [set2, set3, set1]
+    all_vars += [set1, set2, set3, set4]
 
     results = {"vars": None, "failed": []}
 
-    with _TestSystem() as test_system:
-        for test_vars in all_vars:
-            try:
-                test_system.try_vars(test_vars, verbose=verbose)
-                results["vars"] = test_vars
-                break
-            except Exception as e:
-                results["failed"].append({"vars": test_vars, "what": str(e)})
-                if verbose:
-                    print()
-            test_system.reset()
+    for test_vars in all_vars:
+        # subprocess call of:
+        #     python -m casm.bset --test --cxxflags cxxflags \
+        #         --soflags soflags --prefix prefix
+        args = ["python", "-m", "casm.bset", "--test"]
+
+        prefix = test_vars.get("CASM_PREFIX")
+        if prefix:
+            args.extend(["--prefix", prefix])
+
+        cxxflags = test_vars.get("CASM_CXXFLAGS")
+        if cxxflags:
+            args.extend(["--cxxflags", cxxflags])
+
+        soflags = test_vars.get("CASM_SOFLAGS")
+        if soflags:
+            args.extend(["--soflags", soflags])
+
+        print("# Testing configuration variables with ... ")
+        print("# " + " ".join(args))
+        print()
+
+        completed_process = subprocess.run(args)
+
+        if completed_process.returncode != 0:
+            results["failed"].append({"vars": test_vars, "what": "failed"})
+            if verbose:
+                print()
+        else:
+            results["vars"] = test_vars
+            break
 
     if apply_results is True:
         if results["vars"] is None:
