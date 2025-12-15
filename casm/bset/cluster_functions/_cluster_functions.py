@@ -1473,7 +1473,7 @@ class ClusterFunctionsBuilder:
                 print(f"*** i_orbit: {i_orbit}, i_clex: {i_clex} ***")
                 print("Equivalent phenomenal cluster:")
                 site_rep = builder.phenomenal_generating_site_rep[i_clex]
-                equiv_phenomenal = site_rep * self.phenomenal
+                equiv_phenomenal = site_rep * self._phenomenal
                 print(xtal.pretty_json(equiv_phenomenal.to_dict(self._prim.xtal_prim)))
                 print()
 
