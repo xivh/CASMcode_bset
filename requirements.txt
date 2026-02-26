@@ -1,5 +1,5 @@
 jinja2
-libcasm-configuration>=2.0.0
+libcasm-configuration>=2.3.0
 numpy
 opt-einsum
 scipy

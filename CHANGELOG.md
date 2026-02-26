@@ -5,6 +5,18 @@ All notable changes to `casm-bset` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-02-26
+
+### Changed
+
+- Set requires-python to ">=3.10,<3.15" to match the wheels being built for CASM C++ extensions and distributed on PyPI.
+- Changed libcasm-configuration dependency to ">=2.3.0". This will avoid potential compatibility issues between libcasm-configuration<2.3.0 and the planned libcasm-xtal>=3.
+
+### Fixed
+
+- Fixed a variable name in ClusterFunctionsBuilder._build_equivalent_orbit_basis_sets which resulted in an error when `build_cluster_functions` was called with `verbose=True`.
+
+
 ## [2.1.0] - 2025-08-09
 
 ### Added

@@ -7,13 +7,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "casm-bset"
-version = "2.1.0"
+version = "2.2.0"
 authors = [
   { name="CASM developers", email="casm-developers@lists.engr.ucsb.edu" },
 ]
 description = "CASM cluster expansion basis set generation"
 readme = "README.md"
-requires-python = ">=3.9,<3.14"
+requires-python = ">=3.10,<3.15"
 license = "LGPL-2.1-or-later"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -22,7 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "jinja2",
-    "libcasm-configuration>=2.0.0",
+    "libcasm-configuration>=2.3.0",
     "numpy",
     "opt-einsum",
     "scipy",
