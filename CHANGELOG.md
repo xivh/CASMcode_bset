@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed a variable name in ClusterFunctionsBuilder._build_equivalent_orbit_basis_sets which resulted in an error when `build_cluster_functions` was called with `verbose=True`.
+- Fixed a variable name in ClusterFunctionsBuilder._build_equivalent_orbit_basis_sets which resulted in an error when `build_cluster_functions` was called with `verbose=True`. 
 
 
 ## [2.1.0] - 2025-08-09
