@@ -29,7 +29,7 @@ The occupation and magnetic spin DoF types require specific parameterization usi
 
 .. code-block:: Python
 
-    dof_spces = {
+    dof_specs = {
         "occ": {
             "site_basis_functions": "occupation"
         }
@@ -38,7 +38,7 @@ The occupation and magnetic spin DoF types require specific parameterization usi
 
 .. code-block:: Python
 
-    dof_spces = {
+    dof_specs = {
         "NCmagspin": {
             "max_poly_order": 5
         }
@@ -154,7 +154,7 @@ where `i_factor_group` is the index of the factor group operation that differs f
 
 Notes:
 
-- :math:`\pmb{M}_{b^{\ast}}(\hat{s})` is a row permutation matrix. It permutes the rows of the column vector :math:`\vec{p}_{b^{\ast}}` consistent with the order the transformed occupants are listed  as allowed occupants on the final site.
+- :math:`\pmb{M}_{b^{\ast}}(\hat{s})` is a row permutation matrix. It permutes the rows of the column vector :math:`\vec{p}_{b^{\ast}}` consistent with the order the transformed occupants are listed as allowed occupants on the final site.
 - The transpose of a permutation matrix is equal to its inverse.
 - The inverse of a row permutation matrix is the column permutation matrix which permutes columns in the same cycle that the row permutation matrix permutes rows.
 - Therefore, :math:`\pmb{M}_{b^{\ast}}(\hat{s})^{\top}` is a column permutation matrix which can permute the columns of :math:`\pmb{\varphi}_{b^{\ast}}` (which correspond to occupation index) to give symmetrically consistent site basis functions on :math:`b` according to :math:`\pmb{\varphi}_{b} = \pmb{\varphi}_{b^{\ast}} \pmb{M}_{b^{\ast}}(\hat{s})^{\top}`.
@@ -163,10 +163,10 @@ Matrix representations, :math:`\pmb{\tilde{M}}_{b^{\ast}}(\hat{s})`, for transfo
 
 .. math::
 
-    \begin{align}
+    \begin{aligned}
     \vec{p}_{\nu^{\ast}} &= \pmb{B}_{\nu^{\ast}} \vec{\varphi}_{\nu^{\ast}}, \\
     \left(\vec{p}_{\nu}\right)' &= \pmb{B}_{\nu} \left(\vec{\varphi}_{\nu}\right)'.
-    \end{align}
+    \end{aligned}
 
 Then substitute into Eq. :eq:`indicator_transformation` to obtain
 
@@ -179,10 +179,10 @@ Finally, left multiply by :math:`\pmb{B}_{\nu}^{-1}` and use :math:`\pmb{B} = \l
 .. math::
     :label: occ_site_func_transformation
 
-    \begin{align}
+    \begin{aligned}
     \left(\vec{\varphi}_{\nu}\right)' &= \pmb{\tilde{M}}_{b^{\ast}}(\hat{s}) \vec{\varphi}_{\nu^{\ast}}, \\
     \pmb{\tilde{M}}_{b^{\ast}}(\hat{s}) &= \pmb{\varphi}_{\nu} \pmb{M}_{b^{\ast}}(\hat{s}) \pmb{\varphi}_{\nu^{\ast}}^{-1}.
-    \end{align}
+    \end{aligned}
 
 
 
@@ -356,7 +356,7 @@ Directly-set site basis functions
 
 The site basis functions can be directly specified on each sublattice using an array of dict, with the attributes:
 
-- "value": list[list[float], Species the site basis function values, :math:`\varphi_{ms}`,
+- "value": list[list[float]], Species the site basis function values, :math:`\varphi_{ms}`,
   where the row index, :math:`m`, corresponds to a function index, and the column, :math:`s`,
   is the site occupation index. One row must be the vector of ones.
 
