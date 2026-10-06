@@ -524,6 +524,22 @@ def make_direct_site_functions(
 ):
     """Construct site basis functions as directly specified for each sublattice.
 
+    .. warning::
+
+        With this method it is possible to incorrectly use site basis functions
+        that are not consistent with the symmetry of the prim. It should be
+        considered a feature for developers and advanced users who understand
+        how to check the results.
+
+    The site basis functions can be directly specified on each sublattice using an array of dict, with the attributes:
+
+    - "value": list[list[float]], Species the site basis function values, :math:`\varphi_{ms}`,
+      where the row index, :math:`m`, corresponds to a function index, and the column, :math:`s`,
+      is the site occupation index. One row must be the vector of ones.
+
+    - "sublat_indices": list[int], Specifies the sublattices for which the site basis
+      function values apply.
+
     Parameters
     ----------
     site_basis_functions_specs: list[dict]
@@ -583,40 +599,48 @@ def make_direct_site_functions(
     _occ_site_functions = {}
     """dict[int,numpy.ndarray]: Sublattice index -> site functions"""
 
-    for site in site_basis_functions_specs:
+    for i_site, site in enumerate(site_basis_functions_specs):
+        values = np.array(site["value"], dtype=float)
+        if len(values.shape) != 2:
+            raise Exception(
+                "Error in make_direct_site_functions: "
+                "value must be a list of lists, as value[function_index][occupant_index]."
+            )
+        # enforce that exactly one row is all ones
+        all_ones = np.all(np.isclose(values, 1.0, atol=abs_tol), axis=1)
+        n_all_ones = int(np.sum(all_ones))
+        if n_all_ones != 1:
+            raise Exception(
+                f"Error in make_direct_site_functions: "
+                f"site {i_site} has {n_all_ones} rows of all ones, "
+                f"expected one row of all ones."
+            )
         for i_sublat in site["sublat_indices"]:
             found_sublat_indices.add(i_sublat)
-            site_occ_dofs = occ_dofs[i_sublat]
-            n_allowed_occs = len(site_occ_dofs)
-            occ_probs = np.zeros((n_allowed_occs,))
-            if len(site["composition"]) != n_allowed_occs:
+            n_allowed_occs = len(occ_dofs[i_sublat])
+            if values.shape[1] != n_allowed_occs:
                 raise Exception(
-                    "Error in make_composition_site_functions: "
+                    "Error in make_direct_site_functions: "
                     f"for sublattice {i_sublat} "
                     f"the number of allowed occupants ({n_allowed_occs}) "
-                    f"does not match the number of compositions provided."
+                    f"does not match the number of values per function "
+                    f"({values.shape[1]})."
                 )
-            for name, value in site["composition"].items():
-                if name not in site_occ_dofs:
-                    raise Exception(
-                        "Error in make_composition_site_functions: "
-                        f"For sublattice {i_sublat}, {name} is not an allowed occupant."
-                    )
-                occ_probs[site_occ_dofs.index(name)] = value
-            if not almost_equal(np.sum(occ_probs), 1.0, abs_tol=casmglobal.TOL):
+            if values.shape[0] != n_allowed_occs:
                 raise Exception(
-                    "Error in make_composition_site_functions: "
-                    f"For sublattice {i_sublat}, composition does not sum to 1.0."
+                    "Error in make_direct_site_functions: "
+                    f"for sublattice {i_sublat} "
+                    f"the number of allowed occupants ({n_allowed_occs}) "
+                    f"does not match the number of functions ({values.shape[0]})."
                 )
-            phi = make_orthonormal_discrete_functions(occ_probs, abs_tol)
-            _occ_site_functions[i_sublat] = phi
+            _occ_site_functions[i_sublat] = values
 
     # check that all sublattices with >1 occupant were specified
     for i_sublat, site_occ_dofs in enumerate(occ_dofs):
         if len(site_occ_dofs) > 1 and i_sublat not in found_sublat_indices:
             raise Exception(
-                "Error in make_composition_site_functions: "
-                f"No compositions provided for sublattice {i_sublat}."
+                "Error in make_direct_site_functions: "
+                f"No values provided for sublattice {i_sublat}."
             )
 
     indices = list(found_sublat_indices)
